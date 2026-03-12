@@ -129,6 +129,22 @@ page 50101 "Book List"
                     BookTypeProcess.StartDeliverBook();
                 end;
             }
+            action(SalesProcessWithInterfaceAndEnum)
+            {
+                Caption = 'Sales Process With Interface And Enum';
+                ApplicationArea = All;
+                Image = Process;
+                ToolTip = 'Executes the Sales Process With Interface And Enum action.';
+
+                trigger OnAction()
+                var
+                    BookTypeProcess: Interface "Book Type Process";
+                begin
+                    BookTypeProcess := Rec.Type;
+                    BookTypeProcess.StartDeployBook();
+                    BookTypeProcess.StartDeliverBook();
+                end;
+            }
         }
         area(Reporting)
         {
