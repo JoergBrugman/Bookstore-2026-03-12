@@ -20,12 +20,31 @@ page 50101 "Book List"
         {
             repeater(Books)
             {
-                field("No."; Rec."No.") { }
-                field(Description; Rec.Description) { }
-                field(ISBN; Rec.ISBN) { }
-                field(Author; Rec.Author) { }
-                field(Type; Rec."Type") { }
-                field("No. of Pages"; Rec."No. of Pages") { Visible = false; }
+                field("No."; Rec."No.")
+                {
+                    ToolTip = 'Specifies the value of the No. field.', Comment = 'de-DE=Nr.';
+                }
+                field(Description; Rec.Description)
+                {
+                    ToolTip = 'Specifies the value of the Description field.';
+                }
+                field(ISBN; Rec.ISBN)
+                {
+                    ToolTip = 'Specifies the value of the ISBN field.';
+                }
+                field(Author; Rec.Author)
+                {
+                    ToolTip = 'Specifies the value of the Author field.';
+                }
+                field(Type; Rec."Type")
+                {
+                    ToolTip = 'Specifies the value of the Type field.';
+                }
+                field("No. of Pages"; Rec."No. of Pages")
+                {
+                    Visible = false;
+                    ToolTip = 'Specifies the value of the No. of Pages field.';
+                }
             }
         }
         area(FactBoxes)
@@ -56,10 +75,58 @@ page 50101 "Book List"
 
                 trigger OnAction()
                 var
-                    BookTypeSimpleImpl: Codeunit "Book Type Simple Impl.";
+                    BookTypeHardcoverImpl: Codeunit "Book Type Hardcover Impl.";
+                    BookTypePaperbackImpl: Codeunit "Book Type Paperback Impl.";
+                    IsHandled: Boolean;
                 begin
-                    BookTypeSimpleImpl.StartDeployBook();
-                    BookTypeSimpleImpl.StartDeliverBook();
+                    OnBeforeProcessBook(Rec, IsHandled);
+                    if IsHandled then
+                        exit;
+
+                    case Rec.Type of
+                        "Book Type"::Hardcover:
+                            begin
+                                BookTypeHardcoverImpl.StartDeployBook();
+                                BookTypeHardcoverImpl.StartDeliverBook();
+                            end;
+                        "Book Type"::Paperback:
+                            begin
+                                BookTypePaperbackImpl.StartDeployBook();
+                                BookTypePaperbackImpl.StartDeliverBook();
+                            end;
+                    end;
+                end;
+            }
+            action(SalesProcessWithInterface)
+            {
+                Caption = 'Sales Process with Interface';
+                ApplicationArea = All;
+                Image = Process;
+                ToolTip = 'Executes the Sales Process with Interface action.';
+
+                trigger OnAction()
+                var
+                    BookTypeDefaultImpl: Codeunit "Book Type Default Impl.";
+                    BookTypeHardcoverImpl: Codeunit "Book Type Hardcover Impl.";
+                    BookTypePaperbackImpl: Codeunit "Book Type Paperback Impl.";
+                    IsHandled: Boolean;
+                    BookTypeProcess: Interface "Book Type Process";
+                begin
+                    this.OnBeforeProcessBook(Rec, IsHandled);
+                    if IsHandled then
+                        exit;
+
+                    case Rec.Type of
+                        "Book Type"::" ":
+                            BookTypeProcess := BookTypeDefaultImpl;
+                        "Book Type"::Hardcover:
+                            BookTypeProcess := BookTypeHardcoverImpl;
+                        "Book Type"::Paperback:
+                            BookTypeProcess := BookTypePaperbackImpl;
+                    end;
+
+                    BookTypeProcess.StartDeployBook();
+                    BookTypeProcess.StartDeliverBook();
                 end;
             }
         }
@@ -75,4 +142,9 @@ page 50101 "Book List"
         }
     }
 
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeProcessBook(var Rec: Record Book; var IsHandled: Boolean)
+    begin
+    end;
 }
