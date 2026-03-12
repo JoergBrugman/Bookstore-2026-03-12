@@ -142,6 +142,8 @@ page 50101 "Book List"
                 begin
                     BookTypeProcess := Rec.Type;
                     BookTypeProcess.StartDeployBook();
+                    if BookTypeProcess is "Book Type Process V2" then
+                        (BookTypeProcess as "Book Type Process V2").CheckQuality();
                     BookTypeProcess.StartDeliverBook();
                 end;
             }

@@ -6,9 +6,14 @@ using Microsoft.Inventory.Costing;
 enum 50100 "Book Type" implements "Book Type Process"
 {
     Extensible = true;
-    DefaultImplementation = "Book Type Process" = "Book Type Default Impl.";
+    // DefaultImplementation = "Book Type Process" = "Book Type Default Impl.";
+    UnknownValueImplementation = "Book Type Process" = "Book Type Default Impl.";
 
-    value(0; " ") { Caption = 'None'; }
+    value(0; " ")
+    {
+        Caption = 'None';
+        Implementation = "Book Type Process" = "Book Type Default Impl.";
+    }
     value(1; Hardcover)
     {
         Caption = 'Hardcover';

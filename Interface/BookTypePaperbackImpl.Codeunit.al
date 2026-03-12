@@ -1,6 +1,6 @@
 namespace GetUse.Academy.Bookstore.Interface;
 
-codeunit 50103 "Book Type Paperback Impl." implements "Book Type Process"
+codeunit 50103 "Book Type Paperback Impl." implements "Book Type Process V2"
 {
     procedure StartDeployBook()
     begin
@@ -10,5 +10,10 @@ codeunit 50103 "Book Type Paperback Impl." implements "Book Type Process"
     procedure StartDeliverBook()
     begin
         Message('Mit DPD versenden');
+    end;
+
+    procedure CheckQuality()
+    begin
+        Message('E-Book Qualität OK');
     end;
 }
