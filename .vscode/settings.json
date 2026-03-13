@@ -6,8 +6,7 @@
     "al.enableCodeAnalysis": true,
     "al.codeAnalyzers": [
         "${CodeCop}",
-        "${UICop}",
-        "${PerTenantExtensionCop}"
+        "${UICop}"
     ],
     "editor.mouseWheelZoom": true,
     "editor.snippetSuggestions": "bottom",
