@@ -1,7 +1,8 @@
 namespace GetUse.Academy.Bookstore.InterfaceList;
+
 using Microsoft.Sales.Customer;
 
-codeunit 50106 "Check Customer Blocked" implements "Check Step"
+codeunit 50107 "Check Customer Foreign Bill" implements "Check Step"
 {
     procedure Execute(RecRef: RecordRef): Text
     var
@@ -10,18 +11,23 @@ codeunit 50106 "Check Customer Blocked" implements "Check Step"
         if RecRef.Number <> Database::Customer then
             exit;
         RecRef.SetTable(Customer);
-        if Customer.Blocked <> "Customer Blocked"::" " then
-            exit(StrSubstNo('100: Customer is blocked in level %1', Customer.Blocked));
+        if Customer."Bill-to Customer No." <> '' then
+            exit(StrSubstNo('200: Foreign Customer must not have %1', Customer.FieldCaption("Bill-to Customer No.")));
     end;
 
     procedure GetSequence(): Integer
     begin
-        exit(100);
+        exit(200);
     end;
 
     procedure IsEnabled(RecRef: RecordRef): Boolean
+    var
+        Customer: Record Customer;
     begin
-        exit(RecRef.Number = Database::Customer);
+        if RecRef.Number <> Database::Customer then
+            exit;
+        RecRef.SetTable(Customer);
+        exit(Customer."Country/Region Code" <> '');
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Check Pipeline", OnRegisterCheckSteps, '', false, false)]
@@ -30,5 +36,4 @@ codeunit 50106 "Check Customer Blocked" implements "Check Step"
         if RecRef.Number = Database::Customer then
             Steps.Add(this);
     end;
-
 }
